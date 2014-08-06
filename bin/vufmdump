@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# pylint: disable=F0401,C0111,W0232,E1101,E1103,C0301
+
+"""
+vufmdump - Dump binary MARC21 records from VuFind.
+
+Released under the terms of the GNU General Public License (GPL) Version 3
+
+Copyright (c) 2013, 2014 Leander Seige <seige@ub.uni-leipzig.de>,
+Martin Czygan <martin.czygan@uni-lipzig.de>,
+Leipzig University Library http://www.ub.uni-leipzig.de
+
+"""
+from __future__ import print_function
+import argparse
+import random
+import solr
+import sys
+import os
+import time
+
+def namegen(directory='.', prefix='vufmdump-'):
+    """
+    Return filenames with name suffix counted up by one on each call.
+    """
+    counter = 0
+    while True:
+        yield os.path.join(directory, '%s%08d.mrc' % (prefix, counter))
+        counter += 1
+
+def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title:lucene', size=100, encoding='utf-8'):
+    """
+    Yields MARC records extracted from the fullrecord field for a given
+    solr connection and query.
+    """
+    try:
+        solrconn = solr.SolrConnection(url)
+    except solr.core.SolrException as err:
+        print(err)
+        sys.exit(1)
+    start = 0
+    while True:
+        try:
+            response = solrconn.query(query, start=start, rows=size)
+        except solr.core.SolrException as err:
+            print(err)
+            sys.exit(1)
+
+        if len(response) == 0:
+            break
+        for item in response:
+            if not 'fullrecord' in item:
+                continue
+            record = item['fullrecord'].strip()
+            record = record.replace('#31;', '\x1f').replace('#30;', '\x1e').replace('#29;', '\x1d')
+            record = record.encode(encoding)
+            yield record
+            start += size
+            time.sleep(delay * random.random())
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--url", "-u", default="http://localhost:8983/solr/biblio", help="Solr server URL")
+    parser.add_argument("--query", "-q", default="title:lucene", help="Solr query")
+    parser.add_argument("--limit", "-l", default=100, type=int, help="max records, 0 = unlimited")
+    parser.add_argument("--size", "-s", default=20, type=int, help="number of records per query")
+    parser.add_argument("--records", "-r", default=10000, type=int, help="number of records per file")
+    parser.add_argument("--directory", "-i", default=".", help="directory to write files to (must exists)")
+    parser.add_argument("--prefix", "-p", default='vufmdump', help="file output basename, number and .mrc extension will be appended automatically")
+    parser.add_argument("--delay", "-d", type=float, help="delay in seconds between queries")
+    parser.add_argument("--encoding", "-e", default='utf-8', help="encoding to use")
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.directory):
+        print('no such directory: %s' % args.directory, file=sys.stderr)
+        sys.exit(1)
+
+    filenames = namegen(directory=args.directory, prefix=args.prefix)
+    batch = []
+    for i, record in enumerate(iterrecords(url=args.url, query=args.query, delay=args.delay, size=args.size, encoding=args.encoding)):
+        batch.append(record)
+        if i % args.records == 0 and i > 0:
+            with open(filenames.next(), 'w') as handle:
+                for item in batch:
+                    handle.write(item)
+            batch[:] = []
