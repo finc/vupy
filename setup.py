@@ -2,8 +2,7 @@
 # coding: utf-8
 
 """
-siskin is a set of tasks for library metadata management.
-~~~~~~
+Python helper for vufind.
 """
 
 try:
