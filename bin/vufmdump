@@ -92,3 +92,11 @@ if __name__ == '__main__':
                 for item in batch:
                     handle.write(item)
             batch[:] = []
+        if i >= args.limit:
+            break
+
+    # write the leftover records to a file
+    if batch:
+        with open(filenames.next(), 'w') as handle:
+            for item in batch:
+                handle.write(item)
