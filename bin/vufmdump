@@ -48,9 +48,9 @@ def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title
         except solr.core.SolrException as err:
             print(err)
             sys.exit(1)
-	except socket.error as err:
-	    print('connectivity error: %s: %s' % (url, err))
-	    sys.exit(1)
+        except socket.error as err:
+            print('connectivity error: %s: %s' % (url, err))
+            sys.exit(1)
 
         if len(response) == 0:
             break
