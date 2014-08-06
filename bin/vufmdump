@@ -65,16 +65,16 @@ def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title
             time.sleep(delay * random.random())
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("--url", "-u", default="http://localhost:8983/solr/biblio", help="Solr server URL")
     parser.add_argument("--query", "-q", default="title:lucene", help="Solr query")
-    parser.add_argument("--limit", "-l", default=100, type=int, help="max records, 0 = unlimited")
+    parser.add_argument("--limit", "-l", default=0, type=int, help="stop after approximately this number of records, 0 = unlimited")
     parser.add_argument("--size", "-s", default=20, type=int, help="number of records per query")
     parser.add_argument("--records", "-r", default=10000, type=int, help="number of records per file")
     parser.add_argument("--directory", "-i", default=".", help="directory to write files to (must exists)")
-    parser.add_argument("--prefix", "-p", default='vufmdump', help="file output basename, number and .mrc extension will be appended automatically")
-    parser.add_argument("--delay", "-d", type=float, help="delay in seconds between queries")
+    parser.add_argument("--prefix", "-p", default='vufmdump-', help="file prefix, number and .mrc extension will be appended automatically")
+    parser.add_argument("--delay", "-d", type=float, help="delay in seconds between queries (will be jittered)")
     parser.add_argument("--encoding", "-e", default='utf-8', help="encoding to use")
 
     args = parser.parse_args()
