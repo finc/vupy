@@ -14,10 +14,11 @@ Leipzig University Library http://www.ub.uni-leipzig.de
 """
 from __future__ import print_function
 import argparse
+import os
 import random
+import socket
 import solr
 import sys
-import os
 import time
 
 def namegen(directory='.', prefix='vufmdump-'):
@@ -32,7 +33,8 @@ def namegen(directory='.', prefix='vufmdump-'):
 def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title:lucene', size=100, encoding='utf-8'):
     """
     Yields MARC records extracted from the fullrecord field for a given
-    solr connection and query.
+    solr connection and query. This method will extract all records subsequently
+    in batches of size `size`.
     """
     try:
         solrconn = solr.SolrConnection(url)
@@ -46,6 +48,9 @@ def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title
         except solr.core.SolrException as err:
             print(err)
             sys.exit(1)
+	except socket.error as err:
+	    print('connectivity error: %s: %s' % (url, err))
+	    sys.exit(1)
 
         if len(response) == 0:
             break
