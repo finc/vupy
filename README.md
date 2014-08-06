@@ -3,6 +3,12 @@ vupy
 
 Python helper for vufind.
 
+[![pypi version](http://img.shields.io/pypi/v/vupy.svg?style=flat)](https://pypi.python.org/pypi/vupy)
+
+Installation
+------------
+
+    pip install vupy
 
 
 vufmdump
