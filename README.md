@@ -8,7 +8,7 @@ Python helper for vufind.
 Installation
 ------------
 
-    pip install vupy
+    $ pip install vupy
 
 
 vufmdump
