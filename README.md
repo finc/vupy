@@ -20,7 +20,8 @@ To download at most 100000 records in chunks of 20 records per solr request
 from `http://localhost:8983/solr/collection1` into MARC files with 500 records
 each, which are stored under `/tmp` with the prefix `coll1-`:
 
-    $ vufmdump --url http://localhost:8983/solr/collection1 --limit 100000 --size 20 --records 500 --prefix coll1 --directory /tmp
+    $ vufmdump --url http://localhost:8983/solr/collection1 --limit 100000 --size 20 \
+               --records 500 --prefix coll1 --directory /tmp
 
 
 Options:
