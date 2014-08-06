@@ -11,9 +11,9 @@ except:
     from distutils.core import setup
 
 setup(name='vupy',
-      version='0.1.0',
+      version='0.1.1',
       description='Python helper for Vufind.',
-      url='https://github.com/ubleipzig/vupy',
+      url='https://github.com/finc/vupy',
       author='Leander Seige',
       author_email='seige@ub.uni-leipzig.de',
       scripts=[
