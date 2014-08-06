@@ -39,17 +39,17 @@ def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title
     try:
         solrconn = solr.SolrConnection(url)
     except solr.core.SolrException as err:
-        print(err)
+        print(err, file=sys.stderr)
         sys.exit(1)
     start = 0
     while True:
         try:
             response = solrconn.query(query, start=start, rows=size)
         except solr.core.SolrException as err:
-            print(err)
+            print(err, file=sys.stderr)
             sys.exit(1)
         except socket.error as err:
-            print('connectivity error: %s: %s' % (url, err))
+            print('connectivity error: %s: %s' % (url, err), file=sys.stderr)
             sys.exit(1)
 
         if len(response) == 0:
