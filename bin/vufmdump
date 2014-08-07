@@ -74,7 +74,7 @@ if __name__ == '__main__':
     parser.add_argument("--records", "-r", default=10000, type=int, help="number of records per file")
     parser.add_argument("--directory", "-i", default=".", help="directory to write files to (must exists)")
     parser.add_argument("--prefix", "-p", default='vufmdump-', help="file prefix, number and .mrc extension will be appended automatically")
-    parser.add_argument("--delay", "-d", type=float, help="delay in seconds between queries (will be jittered)")
+    parser.add_argument("--delay", "-d", default=0.0, type=float, help="delay in seconds between queries (will be jittered)")
     parser.add_argument("--encoding", "-e", default='utf-8', help="encoding to use")
 
     args = parser.parse_args()
