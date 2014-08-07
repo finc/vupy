@@ -16,7 +16,7 @@ vufmdump
 
 Dump binary MARC21 records from VuFind/SOLR.
 
-To download at most 100000 records in chunks of 20 records per SOLR request
+For example, to download at most 100000 records in chunks of 20 records per SOLR request
 from `http://localhost:8983/solr/collection1` into MARC files with 500 records
 each, which are stored under `/tmp` with the prefix `coll1-`, run:
 
@@ -49,6 +49,6 @@ Options:
                             appended automatically (default: vufmdump-)
       --delay DELAY, -d DELAY
                             delay in seconds between queries (will be jittered)
-                            (default: None)
+                            (default: 0.0)
       --encoding ENCODING, -e ENCODING
                             encoding to use (default: utf-8)
