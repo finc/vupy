@@ -64,6 +64,12 @@ def iterrecords(url='http://localhost:8983/solr/biblio', delay=1.0, query='title
             start += size
             time.sleep(delay * random.random())
 
+def writebatch(batch, filename):
+    """ Write a batch of records to filename. """
+    with open(filename, 'w') as handle:
+        for item in batch:
+            handle.write(item)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
@@ -84,19 +90,15 @@ if __name__ == '__main__':
         sys.exit(1)
 
     filenames = namegen(directory=args.directory, prefix=args.prefix)
+    records = iterrecords(url=args.url, query=args.query, delay=args.delay, size=args.size, encoding=args.encoding)
     batch = []
-    for i, record in enumerate(iterrecords(url=args.url, query=args.query, delay=args.delay, size=args.size, encoding=args.encoding)):
+    for i, record in enumerate(records, start=1):
         batch.append(record)
-        if i % args.records == 0 and i > 0:
-            with open(filenames.next(), 'w') as handle:
-                for item in batch:
-                    handle.write(item)
+        if i % args.records == 0:
+            writebatch(batch, filenames.next())
             batch[:] = []
-        if i >= args.limit:
+        if i == args.limit:
             break
 
-    # write the leftover records to a file
     if batch:
-        with open(filenames.next(), 'w') as handle:
-            for item in batch:
-                handle.write(item)
+        writebatch(batch, filenames.next())
